@@ -14,6 +14,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  user-select: none;
 }
 
 .box {
@@ -42,6 +43,9 @@ body {
   cursor: pointer;
 }
 .name-item:hover {
+  background-color: #ff6600;
+}
+.name-item.active {
   background-color: #ff6600;
 }
 .name-item:last-child {

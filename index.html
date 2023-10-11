@@ -1,29 +1,126 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./index.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./index.css" />
     <title>Document</title>
-</head>
-<body>
+  </head>
+  <body>
     <div id="app">
-        <div class="box">
-            <div class="food-name">
-                <div class="name-item">火锅</div>
-                <div class="name-item">海鲜</div>
-                <div class="name-item">小吃</div>
-                <div class="name-item">甜点</div>
-            </div>
-            <div class="food-image">
-                <img src="./images/hg1.jpg" alt="">
-                <div class="pager">
-                    <div class="pager-item">1</div>
-                    <div class="pager-item">2</div>
-                    <div class="pager-item active">3</div>
-                </div>
-            </div>
+      <div class="box">
+        <div class="food-name" id="nameCont"></div>
+        <div class="food-image">
+          <img src="./images/hg1.jpg" alt="" />
+          <div class="pager" id="pagerCont"></div>
         </div>
+      </div>
     </div>
-</body>
+    <script>
+      const foodList = [
+        {
+          title: "火锅",
+          key: "hg",
+          total: 4,
+        },
+        {
+          title: "海鲜",
+          key: "hx",
+          total: 3,
+        },
+        {
+          title: "小吃",
+          key: "xc",
+          total: 5,
+        },
+        {
+          title: "甜点",
+          key: "td",
+          total: 4,
+        },
+      ];
+
+      const img = document.querySelector(".food-image img");
+      const pagerCont = document.getElementById("pagerCont");
+      const nameCont = document.getElementById("nameCont");
+
+      let curKey = foodList[0].key;
+      let curIndex = 0;
+      let curPage = 1;
+
+      function render() {
+        nameCont.innerHTML = "";
+        pagerCont.innerHTML = "";
+        foodList.forEach((item, index) => {
+          renderFoodList(item, index);
+          renderPager(index);
+        });
+      }
+      // 渲染食物名称
+      function renderFoodList(item, index) {
+        const nameItem = document.createElement("div");
+        nameItem.textContent = item.title;
+        nameItem.className = "name-item" + (index === 0 ? " active" : "");
+        nameItem.addEventListener("mouseover", function () {
+          if (curIndex === index) {
+            return;
+          }
+          // 去除其他nameItem上的active类名
+          const allNameItems = document.querySelectorAll(".name-item");
+          allNameItems.forEach((item) => {
+            item.classList.remove("active");
+          });
+          // 给当前经过的nameItem添加active类名
+          nameItem.classList.add("active");
+          changeKey(item.key, index);
+        });
+        nameCont.appendChild(nameItem);
+      }
+      // 渲染分页
+      function renderPager(index) {
+        const pagerItem = document.createElement("div");
+        pagerItem.className = "pager-item" + (index === 0 ? " active" : "");
+        pagerItem.textContent = index + 1;
+        pagerItem.addEventListener("click", function () {
+          if (curPage === index + 1) {
+            return;
+          }
+          const allPagerItems = document.querySelectorAll(".pager-item");
+          allPagerItems.forEach((item) => {
+            item.classList.remove("active");
+          });
+          pagerItem.classList.add("active");
+          changePage(index + 1);
+        });
+        pagerCont.appendChild(pagerItem);
+      }
+
+      function changePage(page) {
+        curPage = page;
+        changeImage();
+      }
+      function resetPager() {
+        curPage = 1;
+        pagerCont.innerHTML = "";
+        for (let i = 0; i < foodList[curIndex].total; i++) {
+          renderPager(i);
+        }
+      }
+      function changeKey(key, index) {
+        curIndex = index;
+        curKey = key;
+        curPage = 1; // 重置页码
+        resetPager();
+        changeImage();
+      }
+      function getImagePath(key, page) {
+        return `./images/${key}${page}.jpg`;
+      }
+      function changeImage() {
+        img.src = getImagePath(curKey, curPage);
+      }
+
+      render();
+    </script>
+  </body>
 </html>
